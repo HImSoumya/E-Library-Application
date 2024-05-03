@@ -1,0 +1,26 @@
+{
+  "name": "02-e_library",
+  "version": "1.0.0",
+  "description": "this is a ebook api project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "rest",
+    "api",
+    "node",
+    "js",
+    "express",
+    "js",
+    "mongodb"
+  ],
+  "author": "Soumya <soumyarb2021@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.12.8",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
