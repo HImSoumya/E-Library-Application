@@ -2,8 +2,9 @@ import express, { NextFunction, Request, Response } from "express"
 import cors from "cors"
 import morgan from "morgan"
 import { config } from "./config/config"
-import connectDB from "./config/dbConnection" 
+import connectDB from "./config/dbConnection"
 import globalErrorHandler from "./middlewares/globalErrorHandler"
+import userRouter from "./user/userRouter"
 
 const app = express()
 const port = config.port || 8086
@@ -14,10 +15,8 @@ app.use(morgan("dev"));
 // DB Connection
 connectDB()
 
-app.get("/", (req: Request, res: Response) => {
-     
-})
-
+//using the userRouter
+app.use("/api/users",userRouter)
 
 // Global error handler
 app.use(globalErrorHandler)
