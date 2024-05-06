@@ -5,6 +5,7 @@ import { config } from "./config/config"
 import connectDB from "./config/dbConnection"
 import globalErrorHandler from "./middlewares/globalErrorHandler"
 import userRouter from "./user/userRouter"
+import bookRouter from "./book/bookRouter"
 
 const app = express()
 const port = config.port || 8086
@@ -17,6 +18,7 @@ connectDB()
 
 //using the userRouter
 app.use("/api/users",userRouter)
+app.use("/api/books",bookRouter)
 
 // Global error handler
 app.use(globalErrorHandler)
