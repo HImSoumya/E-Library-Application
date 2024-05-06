@@ -29,7 +29,6 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     let newUser: User
-
     try {
         // creating a hashed password using bcrypt
         const hashedPassword = await bcrypt.hash(password, 10)
@@ -47,10 +46,51 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // generating token using jwt
         const token = sign({ sub: newUser._id }, config.jwtSecret as string, { expiresIn: '7d' });
-        res.json({ accessToken: token })
+        res.status(201).json({ accessToken: token })
     } catch (error) {
         return next(createHttpError(500, "Error while singing the token"))
     }
+
+};
+
+
+
+
+const loginUser = async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body
+
+    if (!email || !password) {
+        return next(createHttpError(400, "all fields are required"))
+    }
+
+    const user = await userModel.findOne({ email })
+
+    try {
+        if (!user) {
+            return next(createHttpError(404, "User not found."))
+        }
+    } catch (error) {
+        return next(error)
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password)
+    try {
+        if (!isMatch) {
+            return next(createHttpError(400, "username or password incorrect"))
+        }
+    } catch (error) {
+        return next(error)
+    }
+
+    try {
+        // creating access token
+        const token = sign({ sub: user._id }, config.jwtSecret as string, { expiresIn: '7d' });
+        res.json({ accessToken: token })
+    } catch (error) {
+        return next(createHttpError(400, "Eorror while generating the token"))
+    }
+
+
 
 }
 
@@ -62,4 +102,4 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
 
 
-export { createUser }
+export { createUser, loginUser }
