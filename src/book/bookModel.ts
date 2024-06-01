@@ -7,7 +7,7 @@ const bookSchema = new mongoose.Schema<Book>({
         required: true
     },
     author: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     coverImage: {
