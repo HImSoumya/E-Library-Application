@@ -42,6 +42,8 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
             format: "pdf"
         })
 
+        // @ts-ignore
+        console.log('userId',req.userId)
         console.log(uploadResult)
         console.log(bookFileUploadResult)
 
@@ -59,6 +61,7 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
         res.status(201).json({ id: newBook._id })
 
     } catch (error) {
+        console.log(error)
         next(createHttpError(400, "Error while creating book."))
     }
 
