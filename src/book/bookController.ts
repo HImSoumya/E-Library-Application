@@ -159,8 +159,8 @@ const getSingleBook = async (req: Request, res: Response, next: NextFunction) =>
     const bookId = req.params.bookId;
     try {
         const book = await bookModel.findOne({ _id: bookId })
-        if(!book){
-            return next(createHttpError(404,"Book not found"))
+        if (!book) {
+            return next(createHttpError(404, "Book not found"))
         }
         res.json(book)
     } catch (error) {
@@ -169,4 +169,45 @@ const getSingleBook = async (req: Request, res: Response, next: NextFunction) =>
 }
 
 
-export { createBook, updateBook, listBooks, getSingleBook }
+const deleteBook = async (req: Request, res: Response, next: NextFunction) => {
+    const bookId = req.params.bookId
+    const book = await bookModel.findOne({ _id: bookId })
+
+    if (!book) {
+        return next(createHttpError(404, "Book not found."))
+    }
+
+    // Check access
+    const _req = req as AuthRequest;
+    if (book.author.toString() !== _req.userId) {
+        return next(createHttpError(403, "You can not delete others book."));
+    }
+
+    try {
+        //emaple for better understanding let str = "https://res.cloudinary.com/ds1uwkzfo/image/upload/v1717314210/book-covers/c8wxkaxsxocod1mugdbi.jpg"
+        // console.log(str.split("/").at(-2) + "/" + str.split("/").at(-1).split(".").at(-2))
+
+        const coverFileSplits = book.coverImage.split("/")
+        const coverImagePublicId = coverFileSplits.at(-2) + '/' + (coverFileSplits.at(-1)?.split(".").at(-2))
+        console.log({ coverImagePublicId })
+
+        const bookFileSplits = book.file.split("/");
+        const bookFilePublicId = bookFileSplits.at(-2) + "/" + bookFileSplits.at(-1);
+        console.log({ bookFilePublicId })
+
+
+        await cloudinary.uploader.destroy(coverImagePublicId);
+        await cloudinary.uploader.destroy(bookFilePublicId, {
+            resource_type: "raw",
+        });
+
+        await bookModel.deleteOne({ _id: bookId });
+
+        return res.sendStatus(204);
+    } catch (error) {
+        return next(createHttpError(404, "Something went wrong while delete a book."))
+    }
+}
+
+
+export { createBook, updateBook, listBooks, getSingleBook, deleteBook }
