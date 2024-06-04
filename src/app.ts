@@ -10,15 +10,17 @@ import bookRouter from "./book/bookRouter"
 const app = express()
 const port = config.port || 8086
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+    origin: config.frontend_port
+}))
 app.use(morgan("dev"));
 
 // DB Connection
 connectDB()
 
 //using the userRouter
-app.use("/api/users",userRouter)
-app.use("/api/books",bookRouter)
+app.use("/api/users", userRouter)
+app.use("/api/books", bookRouter)
 
 // Global error handler
 app.use(globalErrorHandler)
